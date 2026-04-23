@@ -181,6 +181,18 @@ queries.company_list = [[
         }
     ]]
 
+queries.hot100 = [[
+        query studyPlanV2Detail($planSlug: String!) {
+            studyPlanV2Detail(planSlug: $planSlug) {
+                planSubGroups {
+                    questions {
+                        titleSlug
+                    }
+                }
+            }
+        }
+    ]]
+
 queries.company_questions = [[
         query favoriteQuestionList($favoriteSlug: String!, $filter: FavoriteQuestionFilterInput, $searchKeyword: String, $filtersV2: QuestionFilterInput, $sortBy: QuestionSortByInput, $limit: Int, $skip: Int, $version: String = "v2") {
             favoriteQuestionList(
