@@ -40,7 +40,7 @@ local hot100 = Button("Hot 100", {
 })
 
 local company = Button("Company", {
-    icon = "",
+    icon = "",
     sc = "c",
     on_press = cmd.company,
 })
