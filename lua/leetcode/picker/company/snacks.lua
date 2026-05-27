@@ -12,6 +12,7 @@ return function(companies)
         local entry = company_picker.entry(company)
         local text = company_picker.ordinal(company)
         table.insert(items, {
+            entry = entry,
             text = text,
             value = company,
         })
