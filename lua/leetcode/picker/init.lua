@@ -123,6 +123,17 @@ function P.question(...)
     P.pick("question", ...)
 end
 
+function P.tag(opts)
+    local tag_picker = require("leetcode.picker.tag")
+    require("leetcode.cache.tags").topics(function(tags, err)
+        if err or not tags or vim.tbl_isempty(tags) then
+            log.warn(("Failed to fetch topic tags: %s"):format((err or {}).msg or "empty response"))
+            tags = tag_picker.fallback_topics()
+        end
+        P.pick("tag", tags, opts or {})
+    end)
+end
+
 function P.tabs()
     local utils = require("leetcode.utils")
     local tabs = utils.question_tabs()

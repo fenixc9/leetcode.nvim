@@ -413,6 +413,11 @@ image_support = true,
   Leet list status=<status> difficulty=<difficulty>
   ```
 
+- `Leet tags`
+
+  Opens a topic tag picker. Selecting a tag opens the corresponding question
+  list.
+
 - `Leet random`
 
   ```

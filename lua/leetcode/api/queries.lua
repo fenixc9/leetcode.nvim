@@ -72,6 +72,41 @@ queries.random_question = [[
         }
     ]]
 
+queries.problem_tags = [[
+        query problemsetQuestionList(
+            $categorySlug: String
+            $limit: Int
+            $skip: Int
+            $filters: QuestionListFilterInput
+        ) {
+            problemsetQuestionList: questionList(
+                categorySlug: $categorySlug
+                limit: $limit
+                skip: $skip
+                filters: $filters
+            ) {
+                total: totalNum
+                questions: data {
+                    title_slug: titleSlug
+                }
+            }
+        }
+    ]]
+
+queries.topic_tags = [[
+        query questionTopicsList {
+            topic_tags: questionTopicTags {
+                edges {
+                    node {
+                        name
+                        slug
+                        translated_name: translatedName
+                    }
+                }
+            }
+        }
+    ]]
+
 queries.translations = nil
 
 queries.solved = [[

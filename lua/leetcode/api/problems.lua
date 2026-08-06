@@ -108,6 +108,85 @@ function Problems.question_of_today(cb)
     })
 end
 
+---@param tags string[]
+---@param cb fun(res: { title_slug: string }[]|nil, err: lc.err|nil)
+function Problems.by_tags(tags, cb)
+    local limit = 100
+    local skip = 0
+    local questions = {}
+
+    local function fetch_page()
+        local variables = {
+            categorySlug = "algorithms",
+            limit = limit,
+            skip = skip,
+            filters = { tags = tags },
+        }
+
+        utils.query(queries.problem_tags, variables, {
+            callback = function(res, err)
+                if err then
+                    return cb(nil, err)
+                end
+
+                local page = res and res.data and res.data.problemsetQuestionList
+                if not page or not page.questions then
+                    return cb(nil, { msg = "Failed to fetch tagged questions" })
+                end
+                for _, question in ipairs(page.questions) do
+                    questions[#questions + 1] = {
+                        -- leetcode.cn currently ignores GraphQL field aliases.
+                        title_slug = question.title_slug or question.titleSlug,
+                    }
+                end
+
+                if #questions < page.total and not vim.tbl_isempty(page.questions) then
+                    skip = skip + #page.questions
+                    fetch_page()
+                else
+                    cb(questions, nil)
+                end
+            end,
+        })
+    end
+
+    fetch_page()
+end
+
+---@param cb fun(res: { name: string, slug: string, translated_name: string|nil }[]|nil, err: lc.err|nil)
+function Problems.topic_tags(cb)
+    utils.query(queries.topic_tags, {}, {
+        callback = function(res, err)
+            if err then
+                return cb(nil, err)
+            end
+
+            -- leetcode.cn currently ignores GraphQL field aliases.
+            local data = res and res.data
+            local connection = data and (data.topic_tags or data.questionTopicTags)
+            if not connection or not connection.edges then
+                return cb(nil, { msg = "Failed to fetch topic tags" })
+            end
+            local tags = vim.tbl_map(function(edge)
+                local translated_name = edge.node.translated_name or edge.node.translatedName
+                if type(translated_name) ~= "string" or translated_name == "" then
+                    translated_name = nil
+                end
+                return {
+                    name = edge.node.name,
+                    slug = edge.node.slug,
+                    translated_name = translated_name,
+                }
+            end, connection.edges)
+
+            table.sort(tags, function(a, b)
+                return (a.translated_name or a.name) < (b.translated_name or b.name)
+            end)
+            cb(tags, nil)
+        end,
+    })
+end
+
 ---@param cb function
 function Problems.company_list(cb)
     local query = queries.company_list

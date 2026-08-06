@@ -30,6 +30,13 @@ function cmd.problems(options)
     picker.question(p, options)
 end
 
+---@param options? table<string, string[]>
+function cmd.tags(options)
+    require("leetcode.utils").auth_guard()
+
+    require("leetcode.picker").tag(options or {})
+end
+
 ---@param cb? function
 function cmd.cookie_prompt(cb)
     local cookie = require("leetcode.cache.cookie")
@@ -670,6 +677,10 @@ cmd.commands = {
     list = {
         cmd.problems,
         _args = arguments.list,
+    },
+    tags = {
+        cmd.tags,
+        _args = arguments.tags,
     },
     company = { cmd.company },
     random = {

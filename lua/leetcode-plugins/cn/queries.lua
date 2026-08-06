@@ -68,6 +68,27 @@ queries.random_question = [[
         }
     ]]
 
+queries.problem_tags = [[
+        query problemsetQuestionList(
+            $categorySlug: String
+            $limit: Int
+            $skip: Int
+            $filters: QuestionListFilterInput
+        ) {
+            problemsetQuestionList(
+                categorySlug: $categorySlug
+                limit: $limit
+                skip: $skip
+                filters: $filters
+            ) {
+                total
+                questions {
+                    title_slug: titleSlug
+                }
+            }
+        }
+    ]]
+
 queries.translations = [[
         query getQuestionTranslation($lang: String) {
             translations: allAppliedQuestionTranslations(lang: $lang) {
